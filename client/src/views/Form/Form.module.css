@@ -1,0 +1,42 @@
+.formulario {
+      max-width: 400px;
+      margin: 0 auto;
+      backdrop-filter: blur(15px)
+    }
+    
+    .formulario h1 {
+      text-align: center;
+      
+    }
+    
+    .formulario form {
+      display: flex;
+      flex-direction: column;
+      color: white;
+    }
+    
+    .formulario label {
+      font-weight: bold;
+    }
+    
+    .formulario input,
+    .formulario textarea {
+      margin-bottom: 10px;
+      padding: 5px;
+    }
+    
+    .formulario input[type="submit"] {
+      background-color: #4CAF50;
+      color: white;
+      cursor: pointer;
+    }
+    
+    .formulario input[type="submit"]:hover {
+      background-color: #45a049;
+    }
+    
+    .formulario span {
+      color: red;
+      margin-bottom: 5px;
+    }
+    

@@ -1,0 +1,24 @@
+.Detail{
+      display: flex;
+      flex-wrap: wrap;   
+}
+.divdetail{
+      backdrop-filter: blur(15px)
+}
+.imgdetail{
+      
+      text-align: center;
+      margin-left: 450px;
+      backdrop-filter: blur(15px)
+}
+img{
+      width: 400px;
+      height: 400px;
+     
+}
+
+h1{
+      color: aliceblue;
+      
+      
+}
