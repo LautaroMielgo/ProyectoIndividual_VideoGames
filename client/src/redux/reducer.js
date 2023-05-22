@@ -1,9 +1,10 @@
-import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR } from "../redux/actions";
+import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR,SORT_VIDEOGAMES } from "../redux/actions";
 
 const initialState = {
   videogames: [],
   videogameDetails: null,
-  genres: [], // Agrega un nuevo estado para almacenar los géneros
+  genres: [], 
+  filteredVideogames: [],
   error: null,
 };
 
@@ -38,6 +39,21 @@ const reducer = (state = initialState, action) => {
         ...state,
         error: action.payload,
       };
+      case SORT_VIDEOGAMES:
+        let sortedVideogames = [...state.videogames];
+        if (action.payload === "name_asc") {
+          sortedVideogames.sort((a, b) => a.name.localeCompare(b.name));
+        } else if (action.payload === "name_desc") {
+          sortedVideogames.sort((a, b) => b.name.localeCompare(a.name));
+        } else if (action.payload === "rating_asc") {
+          sortedVideogames.sort((a, b) => a.rating - b.rating);
+        } else if (action.payload === "rating_desc") {
+          sortedVideogames.sort((a, b) => b.rating - a.rating);
+        }
+        return {
+          ...state,
+          videogames: sortedVideogames,
+        };
     default:
       return state;
   }

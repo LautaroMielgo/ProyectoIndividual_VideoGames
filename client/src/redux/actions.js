@@ -14,6 +14,7 @@ export const GET_GENRES_SUCCESS = "GET_GENRES_SUCCESS";
 export const GET_GENRES_ERROR = "GET_GENRES_ERROR";
 export const SORT_VIDEOGAMES = "SORT_VIDEOGAMES";
 
+
 export const getVideogames = () => {
   return async function (dispatch) {
     try {
@@ -196,5 +197,12 @@ export const getGenres = () => {
   };
 };
 
+
+export const sortVideogames = (sortBy) => {
+  return {
+    type: SORT_VIDEOGAMES,
+    payload: sortBy,
+  };
+};
 
 
