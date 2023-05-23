@@ -58,7 +58,7 @@ const reducer = (state = initialState, action) => {
           videogames: sortedVideogames,
         };
         case SET_CURRENT_PAGE:
-  return {
+         return {
     ...state,
     currentPage: action.payload,
   };

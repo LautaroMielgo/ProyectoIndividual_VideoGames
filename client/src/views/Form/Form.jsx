@@ -108,12 +108,12 @@ const Form = () => {
   };
 
   const isValidUrl = (url) => {
-    // Implementa tu lógica de validación personalizada para la URL de la imagen aquí
+    
     return url.startsWith('http://') || url.startsWith('https://');
   };
 
   const isValidRating = (rating) => {
-    // Implementa tu lógica de validación personalizada para la clasificación aquí
+    
     const parsedRating = parseFloat(rating);
     return !isNaN(parsedRating) && parsedRating >= 1 && parsedRating <= 10;
   };
