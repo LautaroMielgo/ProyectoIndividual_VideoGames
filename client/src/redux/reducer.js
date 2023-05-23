@@ -6,7 +6,7 @@ const initialState = {
   genres: [], 
   filteredVideogames: [],
   error: null,
-  currentPage: 1, // Valor predeterminado de currentPage
+  currentPage: 1, 
   gamesPerPage: 15,
 };
 
@@ -25,6 +25,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         videogames: action.payload,
+        
       };
     case SEARCH_VIDEOGAMES_ERROR:
       return {

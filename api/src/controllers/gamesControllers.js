@@ -101,8 +101,17 @@ const searchGameByName = async (name) => {
         const databaseGames = await Videogame.findAll({
           include: Genre, 
         });
+        const databaseResults = databaseGames.map(game => ({
+          id: game.id,
+          name: game.name,
+          image: game.background_image,
+          released: game.released,
+          rating: game.rating,
+          platforms: game.platforms.map(platform => platform.name),
+          genres: game.genres.map(genre => genre.name)
+        }));
     
-        const results = [...apiResults, ...databaseGames];
+        const results = [...apiResults, ...databaseResults];
         return results;
       } catch (error) {
         console.error('Error al obtener todos los juegos:', error);

@@ -1,25 +1,53 @@
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
-import { createVideogame } from '../../redux/actions';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { createVideogame, getGenres } from '../../redux/actions';
 import style from "./Form.module.css"
 
 const Form = () => {
   const dispatch = useDispatch();
+  const availableGenres = useSelector((state) => state.genres);
 
   const initialFormData = {
     name: '',
     description: '',
-    platforms: '',
+    platforms: [],
+    genres: [],
     image: '',
     releaseDate: '',
     rating: ''
   };
-   
+
   const [formData, setFormData] = useState(initialFormData);
   const [errors, setErrors] = useState({});
+  const [availablePlatforms, setAvailablePlatforms] = useState([]);
+
+  useEffect(() => {
+    fetchPlatforms();
+    dispatch(getGenres());
+  }, [dispatch]);
+
+  const fetchPlatforms = async () => {
+    try {
+      const response = await fetch('https://api.rawg.io/api/platforms?key=fb87907741bc4827b6de9ef781e8a8b4');
+      const data = await response.json();
+      setAvailablePlatforms(data.results);
+    } catch (error) {
+      console.log('Error al obtener las plataformas:', error);
+    }
+  };
 
   const handleChange = (event) => {
     setFormData({ ...formData, [event.target.name]: event.target.value });
+  };
+
+  const handlePlatformChange = (event) => {
+    const selectedPlatforms = Array.from(event.target.selectedOptions, (option) => option.value);
+    setFormData({ ...formData, platforms: selectedPlatforms });
+  };
+
+  const handleGenreChange = (event) => {
+    const selectedGenres = Array.from(event.target.selectedOptions, (option) => option.value);
+    setFormData({ ...formData, genres: selectedGenres });
   };
 
   const handleSubmit = (event) => {
@@ -36,12 +64,14 @@ const Form = () => {
       validationErrors.description = 'La descripción es requerida';
     }
 
-    if (!formData.platforms.trim()) {
-      validationErrors.platforms = 'Las plataformas son requeridas';
+    if (formData.platforms.length === 0) {
+      validationErrors.platforms = 'Debes seleccionar al menos una plataforma';
     }
 
     if (!formData.image.trim()) {
       validationErrors.image = 'La URL de la imagen es requerida';
+    } else if (!isValidUrl(formData.image.trim())) {
+      validationErrors.image = 'La URL de la imagen no es válida';
     }
 
     if (!formData.releaseDate.trim()) {
@@ -50,16 +80,22 @@ const Form = () => {
 
     if (!formData.rating.trim()) {
       validationErrors.rating = 'La clasificación es requerida';
+    } else if (!isValidRating(formData.rating.trim())) {
+      validationErrors.rating = 'La clasificación no es válida';
+    }
+
+    if (formData.genres.length === 0) {
+      validationErrors.genres = 'Debes seleccionar al menos un género';
     }
 
     setErrors(validationErrors);
 
     if (Object.keys(validationErrors).length === 0) {
-      // Aquí puedes realizar la llamada al backend para crear el nuevo videojuego
       const newGame = {
         name: formData.name,
         description: formData.description,
-        platforms: formData.platforms.split(','),
+        platforms: formData.platforms,
+        genres: formData.genres,
         image: formData.image,
         releaseDate: formData.releaseDate,
         rating: formData.rating
@@ -67,9 +103,19 @@ const Form = () => {
 
       dispatch(createVideogame(newGame));
 
-      // Restablecer los campos del formulario
       setFormData(initialFormData);
     }
+  };
+
+  const isValidUrl = (url) => {
+    // Implementa tu lógica de validación personalizada para la URL de la imagen aquí
+    return url.startsWith('http://') || url.startsWith('https://');
+  };
+
+  const isValidRating = (rating) => {
+    // Implementa tu lógica de validación personalizada para la clasificación aquí
+    const parsedRating = parseFloat(rating);
+    return !isNaN(parsedRating) && parsedRating >= 1 && parsedRating <= 10;
   };
 
   return (
@@ -85,8 +131,21 @@ const Form = () => {
         {errors.description && <span>{errors.description}</span>}<br /><br />
 
         <label htmlFor="platforms">Plataformas:</label>
-        <input type="text" id="platforms" name="platforms" value={formData.platforms} onChange={handleChange} />
+        <select id="platforms" name="platforms" multiple value={formData.platforms} onChange={handlePlatformChange}>
+          {availablePlatforms.map((platform) => (
+            <option key={platform.id} value={platform.slug}>{platform.name}</option>
+          ))}
+        </select>
         {errors.platforms && <span>{errors.platforms}</span>}<br /><br />
+
+        <label htmlFor="genres">Géneros:</label>
+        <select id="genres" name="genres" multiple value={formData.genres} onChange={handleGenreChange}>
+        {availableGenres && availableGenres.map((genre) => (
+  <option key={genre} value={genre}>{genre}</option>
+))}
+
+        </select>
+        {errors.genres && <span>{errors.genres}</span>}<br /><br />
 
         <label htmlFor="image">URL de la imagen:</label>
         <input type="text" id="image" name="image" value={formData.image} onChange={handleChange} />
@@ -107,5 +166,6 @@ const Form = () => {
 };
 
 export default Form;
+
 
 

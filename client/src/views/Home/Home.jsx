@@ -56,8 +56,9 @@ const Home = () => {
     if (searchQuery.trim() !== '') {
       dispatch(searchVideoGames(searchQuery));
     } else {
-      dispatch(getVideogames());  // Reemplaza esta línea
+      dispatch(getVideogames());  
     }
+    setSearchQuery('');
   };
 
   const handleInputChange = (event) => {
@@ -76,8 +77,13 @@ const Home = () => {
 
   const handleSortByChange = (event) => {
     const sortOption = event.target.value;
-    setSortBy(sortOption);
-    dispatch(setCurrentPage(1));  // Agrega esta línea
+    if (sortOption === 'None') {
+      setSortBy('');
+      dispatch(getVideogames()); 
+    } else {
+      setSortBy(sortOption);
+      dispatch(setCurrentPage(1));
+    }
   };
 
   return (
@@ -112,7 +118,7 @@ const Home = () => {
       <div>
         <label htmlFor="sortBySelect">Sort by: </label>
         <select id="sortBySelect" value={sortBy} onChange={handleSortByChange}>
-          <option value="">None</option>
+          <option value="None">None</option>
           <option value="name_asc">Name (A-Z)</option>
           <option value="name_desc">Name (Z-A)</option>
           <option value="rating_asc">Rating (Low to High)</option>
