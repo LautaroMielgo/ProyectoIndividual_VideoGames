@@ -1,4 +1,4 @@
-import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR,SORT_VIDEOGAMES } from "../redux/actions";
+import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR,SORT_VIDEOGAMES,SET_CURRENT_PAGE } from "../redux/actions";
 
 const initialState = {
   videogames: [],
@@ -6,6 +6,8 @@ const initialState = {
   genres: [], 
   filteredVideogames: [],
   error: null,
+  currentPage: 1, // Valor predeterminado de currentPage
+  gamesPerPage: 15,
 };
 
 const reducer = (state = initialState, action) => {
@@ -54,6 +56,11 @@ const reducer = (state = initialState, action) => {
           ...state,
           videogames: sortedVideogames,
         };
+        case SET_CURRENT_PAGE:
+  return {
+    ...state,
+    currentPage: action.payload,
+  };
     default:
       return state;
   }

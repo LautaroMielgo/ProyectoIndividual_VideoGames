@@ -13,13 +13,14 @@ export const FILTER_BY_ORIGIN = "FILTER_BY_ORIGIN";
 export const GET_GENRES_SUCCESS = "GET_GENRES_SUCCESS";
 export const GET_GENRES_ERROR = "GET_GENRES_ERROR";
 export const SORT_VIDEOGAMES = "SORT_VIDEOGAMES";
-
+export const SET_CURRENT_PAGE= "SET_CURRENT_PAGE"
 
 export const getVideogames = () => {
-  return async function (dispatch) {
+  return async function (dispatch, getState) {  // Agrega el argumento getState
     try {
+      const { currentPage, gamesPerPage } = getState();
       const response = await axios.get(
-        "https://api.rawg.io/api/games?key=fb87907741bc4827b6de9ef781e8a8b4"
+        `https://api.rawg.io/api/games?key=fb87907741bc4827b6de9ef781e8a8b4&page=${currentPage}&page_size=${gamesPerPage}`
       );
       const apiResults = Array.isArray(response.data.results)
         ? response.data.results.map((game) => ({
@@ -46,6 +47,7 @@ export const getVideogames = () => {
     }
   };
 };
+
 
 
 
@@ -202,6 +204,13 @@ export const sortVideogames = (sortBy) => {
   return {
     type: SORT_VIDEOGAMES,
     payload: sortBy,
+  };
+};
+
+export const setCurrentPage = (page) => {
+  return {
+    type: SET_CURRENT_PAGE,
+    payload: page,
   };
 };
 
