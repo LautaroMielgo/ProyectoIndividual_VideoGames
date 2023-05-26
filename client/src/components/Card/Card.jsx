@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import style from './Card.module.css';
 
 const Card = ({ videogame }) => {
+
   return (
     <Link to={`/detail/${videogame.id}`} className={style.card}>
       <h3>{videogame.name}</h3>
@@ -14,6 +15,7 @@ const Card = ({ videogame }) => {
 };
 
 export default Card;
+
 
 
 

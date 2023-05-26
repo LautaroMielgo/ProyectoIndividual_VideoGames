@@ -16,6 +16,9 @@ export const GET_GENRES_SUCCESS = "GET_GENRES_SUCCESS";
 export const GET_GENRES_ERROR = "GET_GENRES_ERROR";
 export const SORT_VIDEOGAMES = "SORT_VIDEOGAMES";
 export const SET_CURRENT_PAGE= "SET_CURRENT_PAGE";
+export const CREATE_VIDEOGAME_ERROR="CREATE_VIDEOGAME_ERROR"
+export const GET_DATABASE_VIDEOGAMES="GET_DATABASE_VIDEOGAMES"
+
 
 export const getVideogames = () => {
   return async function (dispatch, getState) {  
@@ -66,19 +69,57 @@ export const getVideogameDetails = (id) => {
 };
 
 
-export const createVideogame = (formData) => {
+export const createVideogame = (gameData) => {
   return async function (dispatch) {
     try {
-      const response = await axios.post("http://localhost:3001/videogames", formData);
-
-      const createdVideogame = response.data;
-
-      dispatch({ type: CREATE_VIDEOGAME, payload: createdVideogame });
+      await axios.post("http://localhost:3001/videogames", gameData); 
+     
+      dispatch(getVideogames());
     } catch (error) {
-      console.error("Error creating videogame:", error);
+      dispatch({
+        type: CREATE_VIDEOGAME_ERROR,
+        payload: error.message,
+      });
     }
   };
 };
+export const getDatabaseVideogames = () => {
+  return async function (dispatch) {
+    try {
+      const response = await axios.get(`http://localhost:3001/videogames`);
+      const databaseResults = response.data;
+      
+      const formattedResults = databaseResults
+        .filter(game => typeof game.id === 'string') 
+        .map((game) => ({
+          name: game.name,
+          id: game.id,
+          rating: game.rating,
+          origin: "DATABASE",
+          background_image: game.image,
+          platforms: game.platforms,
+          genres: game.genres.map(genre => genre.name),
+          
+        }));
+
+      dispatch({
+        type: GET_DATABASE_VIDEOGAMES,
+        payload: formattedResults,
+      });
+    } catch (error) {
+      dispatch({
+        type: SEARCH_VIDEOGAMES_ERROR,
+        payload: error.message,
+      });
+    }
+  };
+};
+
+
+
+
+
+
 
 export const searchVideoGames = (game) => {
   return async (dispatch) => {
@@ -99,9 +140,11 @@ export const searchVideoGames = (game) => {
           }))
         : [];
 
+      const filteredResults = apiResults.filter((game) => game.origin === "API");
+
       dispatch({
         type: SEARCH_VIDEOGAMES_SUCCESS,
-        payload: apiResults,
+        payload: filteredResults,
       });
     } catch (error) {
       dispatch({
@@ -111,6 +154,7 @@ export const searchVideoGames = (game) => {
     }
   };
 };
+
 
 export const filterByGenre = (genre) => {
   return async function (dispatch) {

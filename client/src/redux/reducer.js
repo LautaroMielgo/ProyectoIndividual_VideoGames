@@ -1,4 +1,4 @@
-import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR,SORT_VIDEOGAMES,SET_CURRENT_PAGE } from "../redux/actions";
+import { GET_VIDEOGAMES, GET_VIDEOGAME_DETAILS, CREATE_VIDEOGAME, SEARCH_VIDEOGAMES_ERROR, SEARCH_VIDEOGAMES_SUCCESS, GET_GENRES_SUCCESS, GET_GENRES_ERROR,SORT_VIDEOGAMES,SET_CURRENT_PAGE,GET_DATABASE_VIDEOGAMES } from "../redux/actions";
 
 const initialState = {
   videogames: [],
@@ -8,6 +8,8 @@ const initialState = {
   error: null,
   currentPage: 1, 
   gamesPerPage: 15,
+  databaseVideogames: [],
+  platforms: [],
 };
 
 const reducer = (state = initialState, action) => {
@@ -21,23 +23,30 @@ const reducer = (state = initialState, action) => {
         ...state,
         videogames: [...state.videogames, action.payload],
       };
-    case SEARCH_VIDEOGAMES_SUCCESS:
+      case GET_DATABASE_VIDEOGAMES:
+      return {
+        ...state,
+        videogameDetails: action.payload[0],
+        databaseVideogames: action.payload,
+      };
+      
+      case SEARCH_VIDEOGAMES_SUCCESS:
       return {
         ...state,
         videogames: action.payload,
         
       };
-    case SEARCH_VIDEOGAMES_ERROR:
+     case SEARCH_VIDEOGAMES_ERROR:
       return {
         ...state,
         error: action.payload,
       };
-    case GET_GENRES_SUCCESS:
+     case GET_GENRES_SUCCESS:
       return {
         ...state,
         genres: action.payload,
       };
-    case GET_GENRES_ERROR:
+      case GET_GENRES_ERROR:
       return {
         ...state,
         error: action.payload,
@@ -59,11 +68,11 @@ const reducer = (state = initialState, action) => {
         };
         case SET_CURRENT_PAGE:
          return {
-    ...state,
-    currentPage: action.payload,
-  };
-    default:
-      return state;
+        ...state,
+        currentPage: action.payload,
+         };
+         default:
+        return state;
   }
 };
 

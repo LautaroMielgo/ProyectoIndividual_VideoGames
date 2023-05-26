@@ -1,31 +1,73 @@
 .pagination {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-    }
-    
-    .pagination button {
-      margin: 0 5px;
-      padding: 5px 10px;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      cursor: pointer;
-    }
-    
-    .pagination button.active {
-      background-color: #ccc;
-    }
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
-.filtros{
-      display: flex;
-      backdrop-filter: blur(20px);
-      justify-content: space-between;
-      margin-bottom: 10px;
-      margin-top: 10px;
-      
-      
+.pagination a {
+  color: #333;
+  text-decoration: none;
+  padding: 8px 16px;
+  margin: 0 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.pagination a:hover {
+  background-color: #f2f2f2;
+}
+
+.pagination a.active {
+  background-color: #4CAF50;
+  color: white;
+}
+
+
+.filtros {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  backdrop-filter: blur(15px)
+}
+
+
+.filtros > div {
+  margin-right: 10px;
+}
+
+.filtros input[type="text"] {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.filtros button {
+  padding: 5px 10px;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  cursor: pointer;
+
+}
+
+.filtros select {
+  padding: 5px;
+  border: 1px solid #ccc;
+}
+
+.filtros button[disabled] {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.filtros span {
+  font-weight: bold;
 }
 label{
       color: #fff;
       font-size: larger;
+}
+span{
+  color: white;
+  margin: 5px;
 }

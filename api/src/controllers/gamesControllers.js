@@ -7,8 +7,29 @@ const { Op } = require('sequelize');
 const BASE_URL = 'https://api.rawg.io/api';
 
 
-const createGame = async (name,description,platforms,image,releaseDate,rating) =>{ await Videogame.create({name,description,platforms,image,releaseDate,rating});
-};  
+
+const createGame = async (name, description, platforms, image, releaseDate, rating, genres) => {
+  try {
+    const createdGame = await Videogame.create({ name, description, platforms, image, releaseDate, rating });
+    
+    // Asignar los géneros al juego creado
+    if (genres && genres.length > 0) {
+      const genresToAssign = await Genre.findAll({
+        where: {
+          name: genres
+        }
+      });
+      await createdGame.setGenres(genresToAssign);
+    }
+    
+    return createdGame;
+  } catch (error) {
+    console.error('Error al crear el juego:', error);
+    throw error;
+  }
+};
+
+
 
 const getGameById = async (id, source) => {
   try {
@@ -27,7 +48,10 @@ const getGameById = async (id, source) => {
       };
     } else if (source === 'bdd') {
       const game = await Videogame.findByPk(id, {
-        include: Genre, 
+        attributes: ['id', 'image', 'releaseDate','rating'],
+        include: Genre,
+
+                          
       }); 
       
       if (!game) {
@@ -70,11 +94,23 @@ const searchGameByName = async (name) => {
     const databaseGames = await Videogame.findAll({
       where: {
         name: {
-          [Op.like]: `%${name}%`
-        }
+          [Op.like]: `%${name}%`,
+        },
       },
-      include: Genre,
+      include: [
+        {
+          model: Image,
+          attributes: ['url'],
+        },
+        {
+          model: Platform,
+        },
+        {
+          model: Genre,
+        },
+      ],
     });
+    
 
     const results = [...apiResults, ...databaseGames];
     return results;
@@ -84,40 +120,48 @@ const searchGameByName = async (name) => {
   }
 };
 
-    const getAllGames = async () => {
-      try {
-        const url = `${BASE_URL}/games?key=${process.env.REACT_APP_API_KEY}`;
-        const response = await axios.get(url);
-        const apiResults = response.data.results.map(game => ({
-          id: game.id,
-          name: game.name,
-          image: game.background_image,
-          released: game.released,
-          rating: game.rating,
-          platforms: game.platforms.map(platform => platform.platform.name),
-          genres: game.genres.map(genre => genre.name)
-        }));
-    
-        const databaseGames = await Videogame.findAll({
-          include: Genre, 
-        });
-        const databaseResults = databaseGames.map(game => ({
-          id: game.id,
-          name: game.name,
-          image: game.background_image,
-          released: game.released,
-          rating: game.rating,
-          platforms: game.platforms.map(platform => platform.name),
-          genres: game.genres.map(genre => genre.name)
-        }));
-    
-        const results = [...apiResults, ...databaseResults];
-        return results;
-      } catch (error) {
-        console.error('Error al obtener todos los juegos:', error);
-        throw error;
-      }
-    };
+const getAllGames = async () => {
+  try {
+    const url = `${BASE_URL}/games?key=${process.env.REACT_APP_API_KEY}`;
+    const response = await axios.get(url);
+    const apiResults = response.data.results.map(game => ({
+      id: game.id,
+      name: game.name,
+      image: game.background_image,
+      released: game.released,
+      rating: game.rating,
+      platforms: game.platforms.map(platform => platform.platform.name),
+      genres: game.genres.map(genre => genre.name)
+    }));
+
+
+    const databaseGames = await Videogame.findAll({
+      include: Genre
+    });
+    const databaseResults = databaseGames.map(game => ({
+      id: game.id,
+      name: game.name,
+      image: game.image,
+      released: game.released,
+      rating: game.rating,
+      platforms: game.platforms,
+      genres: game.genres.map(genre => genre.name) 
+    }));
+
+    const results = [...apiResults, ...databaseResults];
+    return results;
+  } catch (error) {
+    console.error('Error al obtener todos los juegos:', error);
+    throw error;
+  }
+};
+
+
+
+
+
+
+
 
 
 
