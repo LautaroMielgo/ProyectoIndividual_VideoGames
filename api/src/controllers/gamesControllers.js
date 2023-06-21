@@ -12,7 +12,7 @@ const createGame = async (name, description, platforms, image, releaseDate, rati
   try {
     const createdGame = await Videogame.create({ name, description, platforms, image, releaseDate, rating });
     
-    // Asignar los géneros al juego creado
+    
     if (genres && genres.length > 0) {
       const genresToAssign = await Genre.findAll({
         where: {
